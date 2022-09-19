@@ -72,14 +72,14 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Masukkin data ke profil
-	profilGaPakeEl := models.Profile{
+	profileData := models.Profile{
 		Gender:    request.Gender,
 		Address:   request.Address,
 		Phone:     request.Phone,
 		Subscribe: false,
 	}
 
-	dataProfile, errProfile := h.ProfileRepository.AddProfile(profilGaPakeEl)
+	getProfileData, errProfile := h.ProfileRepository.AddProfile(profileData)
 	if errProfile != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: errProfile.Error()}
@@ -87,17 +87,17 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(dataProfile)
+	fmt.Println(getProfileData)
 
 	registerResponse := authdto.RegisterResponse{
-		Name:      dataUser.Name,
-		Email:     dataUser.Email,
-		Password:  password,
-		Gender:    dataUser.Gender,
-		Phone:     dataUser.Phone,
-		Address:   dataUser.Address,
-		Subscribe: false,
-		Status:    "Customer",
+		Name:     dataUser.Name,
+		Email:    dataUser.Email,
+		Password: password,
+		Gender:   dataUser.Gender,
+		Phone:    dataUser.Phone,
+		Address:  dataUser.Address,
+		Status:   false,
+		Role:     "user",
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -155,8 +155,13 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginResponse := authdto.LoginResponse{
-		Email: user.Email,
-		Token: token,
+		Name:    user.Name,
+		Email:   user.Email,
+		Token:   token,
+		Gender:  user.Gender,
+		Phone:   user.Phone,
+		Address: user.Address,
+		Role:    "user",
 	}
 
 	w.Header().Set("Content-Type", "application/json")

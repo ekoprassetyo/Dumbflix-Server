@@ -8,6 +8,7 @@ type CreateUserRequest struct {
 	Phone     string `json:"phone" gorm:"type: varchar(255)"`
 	Address   string `json:"address" gorm:"type: varchar(255)"`
 	Subscribe bool   `json:"subscribe" gorm:"type: boolean"`
+	Role      string `json:"role" gorm:"type: varchar(255)"`
 }
 
 type UpdateUserRequest struct {
@@ -18,4 +19,5 @@ type UpdateUserRequest struct {
 	Phone     string `json:"phone" gorm:"type: varchar(255)"`
 	Address   string `json:"address" gorm:"type: varchar(255)"`
 	Subscribe bool   `json:"subscribe" gorm:"type: boolean"`
+	Role      string `json:"role" gorm:"type: varchar(255)"`
 }

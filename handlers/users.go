@@ -80,6 +80,7 @@ func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Gender:   request.Gender,
 		Phone:    request.Phone,
 		Address:  request.Address,
+		Role:     "user",
 	}
 
 	data, err := h.UserRepository.CreateUser(User)
