@@ -41,10 +41,10 @@ func (h *handlerFilm) FindFilms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Untuk mengembed path file di property thumbnailfilm
-	for i, p := range films {
-		imagePath := os.Getenv("PATH_FILE") + p.ThumbnailFilm
-		films[i].ThumbnailFilm = imagePath
-	}
+	// for i, p := range films {
+	// 	imagePath := os.Getenv("PATH_FILE") + p.ThumbnailFilm
+	// 	films[i].ThumbnailFilm = imagePath
+	// }
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: films}
