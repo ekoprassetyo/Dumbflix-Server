@@ -1,23 +1,25 @@
 package models
 
+import "time"
+
 type Transaction struct {
 	ID        int          `json:"id" gorm:"primary_key:auto_increment"`
-	StartDate string       `json:"startdate" form:"startdate" gorm:"type: varchar(255)"`
-	DueDate   string       `json:"duedate" form:"duedate" gorm:"type: varchar(255)"`
+	StartDate time.Time    `json:"startdate"`
+	DueDate   time.Time    `json:"duedate"`
 	UserID    int          `json:"user_id" form:"user_id"`
-	User      UserResponse `json:"user"`
-	Attache   string       `json:"attache" form:"attache" gorm:"type: varchar(255)"`
-	Status    bool         `json:"status" gorm:"type:text" form:"status"`
+	User      UserResponse `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Price     int          `json:"price"`
+	Status    string       `json:"status" gorm:"type:varchar(50)"`
 }
 
 type TransactionResponse struct {
 	ID        int          `json:"id"`
-	StartDate string       `json:"startdate"`
-	DueDate   string       `json:"duedate"`
+	StartDate time.Time    `json:"startdate"`
+	DueDate   time.Time    `json:"duedate"`
 	UserID    int          `json:"user_id"`
-	User      UserResponse `json:"user"`
-	Attache   string       `json:"attache"`
-	Status    bool         `json:"status"`
+	User      UserResponse `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Price     int          `json:"price"`
+	Status    string       `json:"status"`
 }
 
 type UserResponse struct {
@@ -34,4 +36,8 @@ type UserResponse struct {
 
 func (UserResponse) TableName() string {
 	return "users"
+}
+
+func (TransactionResponse) TableName() string {
+	return "transactions"
 }

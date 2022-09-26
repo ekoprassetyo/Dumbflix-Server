@@ -11,6 +11,8 @@ type AuthRepository interface {
 	Register(user models.User) (models.User, error)
 	Login(email string) (models.User, error)
 	GetAllUsers() ([]models.User, error)
+	RegisterUpdateAuth(user models.User) (models.User, error)
+	Getuser(ID int) (models.User, error)
 }
 
 func RepositoryAuth(db *gorm.DB) *repository {
@@ -35,4 +37,17 @@ func (r *repository) GetAllUsers() ([]models.User, error) {
 	err := r.db.Preload("Profile").Find(&users).Error
 
 	return users, err
+}
+
+func (r *repository) RegisterUpdateAuth(user models.User) (models.User, error) {
+	err := r.db.Save(&user).Error
+
+	return user, err
+}
+
+func (r *repository) Getuser(ID int) (models.User, error) {
+	var user models.User
+	err := r.db.First(&user, ID).Error
+
+	return user, err
 }

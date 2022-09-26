@@ -61,14 +61,25 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 		Gender:   request.Gender,
 		Phone:    request.Phone,
 		Address:  request.Address,
+		Role:     "user",
 	}
 
 	dataUser, err := h.AuthRepository.Register(user)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+	if dataUser.ID <= 2 {
+		dataUser.Role = "admin"
+		dataUser, err := h.AuthRepository.RegisterUpdateAuth(dataUser)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			response := dto.ErrorResult{Code: http.StatusInternalServerError, Message: err.Error()}
+			json.NewEncoder(w).Encode(response)
+			return
+
+		}
+
+		w.WriteHeader(http.StatusOK)
+		response := dto.SuccessResult{Code: http.StatusOK, Data: dataUser}
 		json.NewEncoder(w).Encode(response)
-		return
+
 	}
 
 	//Masukkin data ke profil
@@ -89,22 +100,22 @@ func (h *handlerAuth) Register(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(getProfileData)
 
-	registerResponse := authdto.RegisterResponse{
-		Name:     dataUser.Name,
-		Email:    dataUser.Email,
-		Password: password,
-		Gender:   dataUser.Gender,
-		Phone:    dataUser.Phone,
-		Address:  dataUser.Address,
-		Status:   false,
-		Role:     "user",
-	}
+	// registerResponse := authdto.RegisterResponse{
+	// 	Name:     dataUser.Name,
+	// 	Email:    dataUser.Email,
+	// 	Password: password,
+	// 	Gender:   dataUser.Gender,
+	// 	Phone:    dataUser.Phone,
+	// 	Address:  dataUser.Address,
+	// 	Status:   false,
+	// 	Role:     "user",
+	// }
 
-	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Code: http.StatusOK, Data: registerResponse}
-	// fmt.Println(response)
+	// w.WriteHeader(http.StatusOK)
+	// response := dto.SuccessResult{Code: http.StatusOK, Data: registerResponse}
+	// // fmt.Println(response)
 
-	json.NewEncoder(w).Encode(response)
+	// json.NewEncoder(w).Encode(response)
 }
 
 func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +172,7 @@ func (h *handlerAuth) Login(w http.ResponseWriter, r *http.Request) {
 		Gender:  user.Gender,
 		Phone:   user.Phone,
 		Address: user.Address,
-		Role:    "user",
+		Role:    user.Role,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -181,5 +192,35 @@ func (h *handlerAuth) GetAllUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: Users}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handlerAuth) CheckAuth(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	// Check User by Id
+	user, err := h.AuthRepository.Getuser(userId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Code: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	CheckAuthResponse := authdto.CheckAuthResponse{
+		Name:      user.Name,
+		Email:     user.Email,
+		Gender:    user.Gender,
+		Phone:     user.Phone,
+		Address:   user.Address,
+		Role:      user.Role,
+		Subscribe: user.Subscribe,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := dto.SuccessResult{Code: http.StatusOK, Data: CheckAuthResponse}
 	json.NewEncoder(w).Encode(response)
 }

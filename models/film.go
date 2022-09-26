@@ -5,6 +5,7 @@ type Film struct {
 	Title         string             `json:"title" gorm:"type: varchar(255)" form:"title"`
 	ThumbnailFilm string             `json:"thumbnailfilm" form:"image" gorm:"type: varchar(255)"`
 	Year          string             `json:"year" gorm:"type: varchar(255)" form:"year"`
+	LinkFilm      string             `json"linkfilm" gorm:"type varchar(255)" form:"linkfilm"`
 	CategoryID    int                `json:"category_id" form:"category_id" gorm:"type:int"`
 	Category      CategoriesResponse `json:"category"`
 	Description   string             `json:"description"  gorm:"type: text" form:"description"`
@@ -15,6 +16,7 @@ type FilmResponse struct {
 	Title         string             `json:"title"`
 	ThumbnailFilm string             `json:"thumbnailfilm"`
 	Year          string             `json:"year"`
+	LinkFilm      string             `json:"linkfilm"`
 	CategoryID    int                `json:"category_id"`
 	Category      CategoriesResponse `json:"category"`
 	Description   string             `json:"description"`
